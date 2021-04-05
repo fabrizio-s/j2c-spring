@@ -81,6 +81,7 @@ local.properties
 *.ipr
 *.ids
 *.orig
+.attach_pid*
 
 ######################
 # Visual Studio Code

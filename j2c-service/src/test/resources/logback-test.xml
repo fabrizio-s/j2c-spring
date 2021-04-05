@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>[%highlight(%-5level)]:   %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.j2c.j2c" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.springframework" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.hibernate" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.springframework" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.jboss.logging" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="jndi" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.apache.http.wire" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

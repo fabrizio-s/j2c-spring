@@ -1,0 +1,2 @@
+DROP USER IF EXISTS "j2c-user";
+CREATE USER "j2c-user" WITH PASSWORD 'j2c-user';
