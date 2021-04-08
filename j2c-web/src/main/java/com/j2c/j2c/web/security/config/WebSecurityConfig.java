@@ -1,9 +1,9 @@
 package com.j2c.j2c.web.security.config;
 
 import com.j2c.j2c.web.security.filter.dao.DaoAuthenticationFilter;
-import com.j2c.j2c.web.security.filter.jwt.JWTAuthenticationFilter;
 import com.j2c.j2c.web.security.filter.jwt.JWTAccessDeniedHandler;
 import com.j2c.j2c.web.security.filter.jwt.JWTAuthenticationEntryPoint;
+import com.j2c.j2c.web.security.filter.jwt.JWTAuthenticationFilter;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

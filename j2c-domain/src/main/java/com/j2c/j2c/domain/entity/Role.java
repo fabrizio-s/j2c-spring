@@ -2,7 +2,7 @@ package com.j2c.j2c.domain.entity;
 
 import com.google.common.collect.ImmutableSet;
 import com.j2c.j2c.domain.enums.RoleType;
-import lombok.*;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Objects;

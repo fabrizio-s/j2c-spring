@@ -2,7 +2,7 @@ package com.j2c.j2c.service.mapper;
 
 import com.j2c.j2c.domain.entity.Address;
 import com.j2c.j2c.service.dto.AddressDTO;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 abstract class AddressDTOMapper {

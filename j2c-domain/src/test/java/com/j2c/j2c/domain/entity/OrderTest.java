@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.j2c.j2c.domain.test.TestUtils.nextObject;
-import static com.j2c.j2c.domain.test.TestUtils.randomLong;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderTest {
 

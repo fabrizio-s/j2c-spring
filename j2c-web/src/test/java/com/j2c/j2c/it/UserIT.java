@@ -2,10 +2,9 @@ package com.j2c.j2c.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.j2c.j2c.domain.enums.RoleType;
+import com.j2c.j2c.it.util.BaseIT;
 import com.j2c.j2c.service.dto.*;
 import com.j2c.j2c.service.input.*;
-import com.j2c.j2c.service.input.VerifyUserForm;
-import com.j2c.j2c.it.util.BaseIT;
 import com.neovisionaries.i18n.CountryCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

@@ -1,10 +1,13 @@
 package com.j2c.j2c.domain.entity;
 
 import com.neovisionaries.i18n.CountryCode;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 

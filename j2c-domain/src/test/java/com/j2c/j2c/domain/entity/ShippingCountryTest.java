@@ -5,7 +5,8 @@ import com.j2c.j2c.domain.test.MockEntity;
 import org.junit.jupiter.api.Test;
 
 import static com.j2c.j2c.domain.exception.DomainErrorMessages.COUNTRY_ALREADY_BELONGS_TO_ZONE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShippingCountryTest {
 

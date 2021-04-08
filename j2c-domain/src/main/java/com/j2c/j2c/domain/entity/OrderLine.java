@@ -1,11 +1,14 @@
 package com.j2c.j2c.domain.entity;
 
 import com.j2c.j2c.domain.exception.DomainException;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 
-import static com.j2c.j2c.domain.entity.MaxLengths.*;
+import static com.j2c.j2c.domain.entity.MaxLengths.PRODUCTVARIANT_NAME_MAXLENGTH;
+import static com.j2c.j2c.domain.entity.MaxLengths.PRODUCT_NAME_MAXLENGTH;
 import static com.j2c.j2c.domain.exception.DomainErrorMessages.*;
 import static com.j2c.j2c.domain.util.J2cUtils.assertNotNull;
 

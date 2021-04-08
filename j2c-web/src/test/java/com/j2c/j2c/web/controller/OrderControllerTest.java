@@ -12,7 +12,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 
-import static com.j2c.j2c.domain.enums.Authorities.*;
+import static com.j2c.j2c.domain.enums.Authorities.PROCESS_ORDERS;
+import static com.j2c.j2c.domain.enums.Authorities.READ_ACCESS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

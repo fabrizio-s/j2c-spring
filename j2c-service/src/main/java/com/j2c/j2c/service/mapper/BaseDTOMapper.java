@@ -2,10 +2,13 @@ package com.j2c.j2c.service.mapper;
 
 import com.google.common.collect.ImmutableList;
 import com.j2c.j2c.service.dto.DTOBuilder;
-import org.springframework.data.domain.Page;
 import org.mapstruct.ObjectFactory;
+import org.springframework.data.domain.Page;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 abstract class BaseDTOMapper<D, B extends DTOBuilder<D>, E> {
 

@@ -1,11 +1,12 @@
 package com.j2c.j2c.domain.entity;
 
-import com.j2c.j2c.domain.exception.DomainException;
 import com.j2c.j2c.domain.enums.OrderStatus;
-import lombok.*;
+import com.j2c.j2c.domain.exception.DomainException;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

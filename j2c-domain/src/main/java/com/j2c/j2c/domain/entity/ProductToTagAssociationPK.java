@@ -1,6 +1,8 @@
 package com.j2c.j2c.domain.entity;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
 import java.io.Serializable;
 import java.util.Objects;

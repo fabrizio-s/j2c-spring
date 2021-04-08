@@ -2,14 +2,17 @@ package com.j2c.j2c.web.controller;
 
 import com.j2c.j2c.service.application.ConfigurationService;
 import com.j2c.j2c.service.dto.ConfigurationDTO;
-import com.j2c.j2c.service.input.*;
+import com.j2c.j2c.service.input.ConfigurationForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.j2c.j2c.domain.enums.Authorities.CONFIG;
 

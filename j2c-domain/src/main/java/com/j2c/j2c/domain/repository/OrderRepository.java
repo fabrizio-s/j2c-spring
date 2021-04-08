@@ -1,7 +1,7 @@
 package com.j2c.j2c.domain.repository;
 
-import com.j2c.j2c.domain.repository.spring.OrderSDJRepository;
 import com.j2c.j2c.domain.entity.Order;
+import com.j2c.j2c.domain.repository.spring.OrderSDJRepository;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

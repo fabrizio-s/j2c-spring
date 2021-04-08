@@ -1,12 +1,15 @@
 package com.j2c.j2c.domain.entity;
 
-import com.j2c.j2c.domain.exception.DomainException;
 import com.j2c.j2c.domain.enums.ShippingMethodType;
-import lombok.*;
+import com.j2c.j2c.domain.exception.DomainException;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
-import static com.j2c.j2c.domain.entity.MaxLengths.*;
+import static com.j2c.j2c.domain.entity.MaxLengths.SHIPPINGMETHOD_NAME_MAXLENGTH;
+import static com.j2c.j2c.domain.entity.MaxLengths.SHIPPINGMETHOD_TYPE_MAXLENGTH;
 import static com.j2c.j2c.domain.enums.ShippingMethodType.Weight;
 import static com.j2c.j2c.domain.exception.DomainErrorMessages.METHOD_DOES_NOT_BELONG_TO_ZONE;
 import static com.j2c.j2c.domain.util.J2cUtils.assertNotNull;

@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.*;
+import java.util.Collections;
 
 import static com.j2c.j2c.domain.enums.Authorities.READ_ACCESS;
 import static com.j2c.j2c.domain.enums.Authorities.WRITE_CHECKOUT;

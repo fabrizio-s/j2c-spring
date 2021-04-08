@@ -1,9 +1,9 @@
 package com.j2c.j2c.domain.repository;
 
+import com.j2c.j2c.domain.entity.Product;
 import com.j2c.j2c.domain.repository.spring.CheckoutLineSDJRepository;
 import com.j2c.j2c.domain.repository.spring.OrderLineSDJRepository;
 import com.j2c.j2c.domain.repository.spring.ProductSDJRepository;
-import com.j2c.j2c.domain.entity.Product;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

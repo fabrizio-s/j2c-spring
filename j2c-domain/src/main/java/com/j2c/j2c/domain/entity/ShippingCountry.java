@@ -2,10 +2,9 @@ package com.j2c.j2c.domain.entity;
 
 import com.j2c.j2c.domain.exception.DomainException;
 import com.neovisionaries.i18n.CountryCode;
-import lombok.*;
+import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.Objects;
 
 import static com.j2c.j2c.domain.entity.MaxLengths.COUNTRY_CODE_MAXLENGTH;

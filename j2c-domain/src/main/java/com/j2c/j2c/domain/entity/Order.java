@@ -1,15 +1,14 @@
 package com.j2c.j2c.domain.entity;
 
 import com.google.common.collect.ImmutableList;
-import com.j2c.j2c.domain.exception.DomainException;
 import com.j2c.j2c.domain.enums.OrderStatus;
+import com.j2c.j2c.domain.exception.DomainException;
 import com.neovisionaries.i18n.CurrencyCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

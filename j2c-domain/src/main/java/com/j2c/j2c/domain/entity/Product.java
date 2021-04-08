@@ -1,7 +1,9 @@
 package com.j2c.j2c.domain.entity;
 
 import com.j2c.j2c.domain.exception.DomainException;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.j2c.j2c.domain.exception.DomainErrorMessages.*;
 import static com.j2c.j2c.domain.entity.MaxLengths.*;
+import static com.j2c.j2c.domain.exception.DomainErrorMessages.*;
 import static com.j2c.j2c.domain.util.J2cUtils.assertNotNull;
 import static java.time.LocalDateTime.now;
 

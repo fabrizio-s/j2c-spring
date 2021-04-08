@@ -4,10 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.j2c.j2c.domain.enums.MassUnit;
 import com.j2c.j2c.domain.exception.DomainException;
 import com.neovisionaries.i18n.CurrencyCode;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

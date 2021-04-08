@@ -19,7 +19,6 @@ import static com.j2c.j2c.web.security.util.AuthenticationUtils.isAnonymous;
 import static com.j2c.j2c.web.util.WebConstants.Bearer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JWTAuthenticationTest extends BaseWebMvcTest {

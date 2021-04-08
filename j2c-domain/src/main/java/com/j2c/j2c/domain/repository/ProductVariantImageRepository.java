@@ -2,9 +2,9 @@ package com.j2c.j2c.domain.repository;
 
 import com.j2c.j2c.domain.entity.ProductVariantImage;
 import com.j2c.j2c.domain.repository.spring.ProductVariantImageSDJRepository;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import lombok.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
