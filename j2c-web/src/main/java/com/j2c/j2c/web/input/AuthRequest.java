@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(name = "Authentication Request")
 public class AuthRequest {
 
     @Email
