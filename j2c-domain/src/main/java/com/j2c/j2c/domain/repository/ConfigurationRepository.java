@@ -1,9 +1,9 @@
 package com.j2c.j2c.domain.repository;
 
 import com.j2c.j2c.domain.entity.Configuration;
+import com.j2c.j2c.domain.enums.Profile;
 import com.j2c.j2c.domain.exception.EntityDoesNotExistException;
 import com.j2c.j2c.domain.repository.spring.ConfigurationSDJRepository;
-import com.j2c.j2c.domain.enums.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,12 +1,14 @@
 package com.j2c.j2c.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.j2c.j2c.service.dto.UploadedImageDTO;
 import com.j2c.j2c.it.util.BaseIT;
+import com.j2c.j2c.service.dto.UploadedImageDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 

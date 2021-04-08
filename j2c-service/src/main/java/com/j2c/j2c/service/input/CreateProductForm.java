@@ -2,7 +2,10 @@ package com.j2c.j2c.service.input;
 
 import com.j2c.j2c.service.validation.NullOrNotBlank;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.*;
 import java.util.Set;

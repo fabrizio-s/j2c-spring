@@ -4,7 +4,6 @@ import com.j2c.j2c.service.application.OrderService;
 import com.j2c.j2c.service.application.UserService;
 import com.j2c.j2c.service.dto.*;
 import com.j2c.j2c.service.input.*;
-import com.j2c.j2c.service.input.VerifyUserForm;
 import com.j2c.j2c.web.security.annotation.HasReadAccess;
 import com.j2c.j2c.web.security.annotation.HasUserWriteAccess;
 import com.j2c.j2c.web.security.annotation.IsOwnerOrHasReadAccess;

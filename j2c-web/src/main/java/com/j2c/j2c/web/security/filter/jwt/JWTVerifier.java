@@ -3,7 +3,6 @@ package com.j2c.j2c.web.security.filter.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;

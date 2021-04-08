@@ -1,10 +1,10 @@
 package com.j2c.j2c.domain.entity;
 
 import com.neovisionaries.i18n.CountryCode;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

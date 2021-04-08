@@ -1,14 +1,17 @@
 package com.j2c.j2c.domain.entity;
 
 import com.j2c.j2c.domain.enums.ShippingMethodType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import static com.j2c.j2c.domain.entity.MaxLengths.*;
+import static com.j2c.j2c.domain.entity.MaxLengths.SHIPPINGMETHOD_NAME_MAXLENGTH;
+import static com.j2c.j2c.domain.entity.MaxLengths.SHIPPINGMETHOD_TYPE_MAXLENGTH;
 import static com.j2c.j2c.domain.util.J2cUtils.assertNotNull;
 
 @Embeddable

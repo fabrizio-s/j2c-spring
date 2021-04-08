@@ -1,7 +1,10 @@
 package com.j2c.j2c.service.mapper;
 
 import com.j2c.j2c.domain.entity.*;
-import com.j2c.j2c.service.dto.*;
+import com.j2c.j2c.service.dto.OrderDTO;
+import com.j2c.j2c.service.dto.UserAddressDTO;
+import com.j2c.j2c.service.dto.UserDTO;
+import com.j2c.j2c.service.dto.UserVerificationTokenDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

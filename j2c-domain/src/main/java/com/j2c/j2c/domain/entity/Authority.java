@@ -2,7 +2,9 @@ package com.j2c.j2c.domain.entity;
 
 import lombok.Getter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 import static com.j2c.j2c.domain.entity.MaxLengths.AUTHORITY_VALUE_MAXLENGTH;

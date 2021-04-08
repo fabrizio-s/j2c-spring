@@ -1,6 +1,7 @@
 package com.j2c.j2c.service.domain.checkout;
 
-import com.j2c.j2c.domain.entity.*;
+import com.j2c.j2c.domain.entity.Checkout;
+import com.j2c.j2c.domain.entity.CheckoutLine;
 import lombok.*;
 
 import java.util.List;

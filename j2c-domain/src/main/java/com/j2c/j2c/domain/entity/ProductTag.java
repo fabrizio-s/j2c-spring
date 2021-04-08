@@ -1,9 +1,9 @@
 package com.j2c.j2c.domain.entity;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
-
 import java.util.Set;
 
 import static com.j2c.j2c.domain.entity.MaxLengths.PRODUCTCATEGORY_NAME_MAXLENGTH;

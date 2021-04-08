@@ -3,7 +3,6 @@ package com.j2c.j2c.service.domain.user;
 import com.j2c.j2c.domain.entity.*;
 import com.j2c.j2c.domain.enums.RoleType;
 import com.j2c.j2c.domain.repository.*;
-import com.j2c.j2c.service.input.ChangeUserEmailForm;
 import com.j2c.j2c.service.exception.ResourceAlreadyExistsException;
 import com.j2c.j2c.service.exception.ServiceException;
 import com.j2c.j2c.service.gateway.PaymentGateway;

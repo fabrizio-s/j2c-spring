@@ -2,6 +2,7 @@ package com.j2c.j2c.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.j2c.j2c.domain.enums.ShippingMethodType;
+import com.j2c.j2c.it.util.BaseIT;
 import com.j2c.j2c.service.dto.ShippingCountryDTO;
 import com.j2c.j2c.service.dto.ShippingMethodDTO;
 import com.j2c.j2c.service.dto.ShippingZoneDTO;
@@ -9,14 +10,14 @@ import com.j2c.j2c.service.input.CreateShippingMethodForm;
 import com.j2c.j2c.service.input.CreateShippingZoneForm;
 import com.j2c.j2c.service.input.UpdateShippingMethodForm;
 import com.j2c.j2c.service.input.UpdateShippingZoneForm;
-import com.j2c.j2c.it.util.BaseIT;
 import com.neovisionaries.i18n.CountryCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ShippingIT extends BaseIT {
 

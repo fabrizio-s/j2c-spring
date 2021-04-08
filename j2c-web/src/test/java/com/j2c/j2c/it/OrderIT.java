@@ -1,11 +1,11 @@
 package com.j2c.j2c.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.j2c.j2c.it.util.BaseIT;
 import com.j2c.j2c.service.dto.*;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
-import com.j2c.j2c.it.util.BaseIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderIT extends BaseIT {
 

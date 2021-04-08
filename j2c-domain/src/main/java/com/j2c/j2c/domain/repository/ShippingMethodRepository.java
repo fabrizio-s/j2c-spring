@@ -1,6 +1,6 @@
 package com.j2c.j2c.domain.repository;
 
-import com.j2c.j2c.domain.entity.*;
+import com.j2c.j2c.domain.entity.ShippingMethod;
 import com.j2c.j2c.domain.repository.spring.ShippingMethodSDJRepository;
 import lombok.Builder;
 import lombok.NonNull;

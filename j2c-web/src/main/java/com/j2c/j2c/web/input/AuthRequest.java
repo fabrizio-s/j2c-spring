@@ -1,7 +1,10 @@
 package com.j2c.j2c.web.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(name = "Authentication Request")
 public class AuthRequest {
 
     @Email

@@ -3,7 +3,10 @@ package com.j2c.j2c.service.dto;
 import com.j2c.j2c.domain.enums.MassUnit;
 import com.neovisionaries.i18n.CurrencyCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

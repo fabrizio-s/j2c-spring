@@ -1,9 +1,9 @@
 package com.j2c.j2c.domain.repository;
 
+import com.j2c.j2c.domain.entity.Role;
 import com.j2c.j2c.domain.enums.RoleType;
 import com.j2c.j2c.domain.exception.EntityDoesNotExistException;
 import com.j2c.j2c.domain.repository.spring.RoleSDJRepository;
-import com.j2c.j2c.domain.entity.Role;
 import lombok.NonNull;
 import org.springframework.stereotype.Repository;
 

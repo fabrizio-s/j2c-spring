@@ -1,6 +1,7 @@
 package com.j2c.j2c.domain.entity;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.UUID;

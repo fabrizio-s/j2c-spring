@@ -5,7 +5,7 @@ import com.j2c.j2c.domain.entity.ProductTag;
 import com.j2c.j2c.domain.entity.ProductVariant;
 import lombok.*;
 
-import java.util.*;
+import java.util.List;
 
 @Getter
 @Builder

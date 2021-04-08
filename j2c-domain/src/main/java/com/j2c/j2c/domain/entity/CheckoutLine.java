@@ -1,7 +1,9 @@
 package com.j2c.j2c.domain.entity;
 
 import com.j2c.j2c.domain.exception.DomainException;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 

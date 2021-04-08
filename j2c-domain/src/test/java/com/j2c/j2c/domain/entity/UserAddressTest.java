@@ -4,7 +4,8 @@ import com.j2c.j2c.domain.test.MockEntity;
 import org.junit.jupiter.api.Test;
 
 import static com.j2c.j2c.domain.test.TestUtils.nextObject;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserAddressTest {
 
