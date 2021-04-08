@@ -1,6 +1,6 @@
 # j2c
 
-Sample b2c e-commerce web app written using Spring Boot 2.
+Sample b2c e-commerce web app made using Spring Boot 2 and JPA/Hibernate.
 
 ##### Some available features:
 - Users, Products, Categories, Checkout and Order processing
