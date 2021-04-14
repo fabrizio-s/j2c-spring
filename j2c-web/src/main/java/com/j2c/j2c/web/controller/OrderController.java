@@ -1,5 +1,6 @@
 package com.j2c.j2c.web.controller;
 
+import com.j2c.j2c.domain.entity.Order;
 import com.j2c.j2c.service.application.OrderService;
 import com.j2c.j2c.service.dto.OrderDTO;
 import com.j2c.j2c.service.dto.OrderFulfillmentDTO;
@@ -10,6 +11,7 @@ import com.j2c.j2c.service.input.Line;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.web.security.annotation.CanProcessOrders;
 import com.j2c.j2c.web.security.annotation.HasReadAccess;
+import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +42,11 @@ public class OrderController {
     @Operation(security = @SecurityRequirement(name = "JWT"),
             summary = "Retrieves all orders",
             description = "Requires " + READ_ACCESS + " authority (Viewer, Staff, Admin).")
-    public Page<OrderDTO> getAll(@ParameterObject final Pageable pageable) {
-        return orderService.findAll(pageable);
+    public Page<OrderDTO> getAll(
+            @QuerydslPredicate(root = Order.class) final Predicate predicate,
+            @ParameterObject final Pageable pageable
+    ) {
+        return orderService.findAll(predicate, pageable);
     }
 
     @GetMapping(value = "/api/orders/{orderId}",

@@ -2,6 +2,7 @@ package com.j2c.j2c.domain.repository;
 
 import com.j2c.j2c.domain.entity.Order;
 import com.j2c.j2c.domain.repository.spring.OrderSDJRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,10 @@ public class OrderRepository
     protected OrderRepository(final OrderSDJRepository repository) {
         super(Order.class, repository);
         this.repository = repository;
+    }
+
+    public Page<Order> findAll(final Predicate predicate, final Pageable pageable) {
+        return repository.findAll(predicate, pageable);
     }
 
     public Page<Order> findAllByCustomerId(@NonNull final Long customerId, final Pageable pageable) {

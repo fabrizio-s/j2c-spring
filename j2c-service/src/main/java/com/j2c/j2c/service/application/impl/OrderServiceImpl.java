@@ -18,6 +18,7 @@ import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.service.mapper.OrderServiceMapper;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +48,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderDTO> findAll(@NotNull final Pageable pageable) {
-        final Page<Order> orders = orderRepository.findAll(pageable);
+    public Page<OrderDTO> findAll(@NotNull final Predicate predicate, @NotNull final Pageable pageable) {
+        final Page<Order> orders = orderRepository.findAll(predicate, pageable);
         return mapper.toOrderDTO(orders);
     }
 
