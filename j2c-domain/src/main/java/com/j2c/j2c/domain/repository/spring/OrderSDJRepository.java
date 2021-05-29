@@ -29,6 +29,9 @@ public interface OrderSDJRepository
     default void customize(@NonNull final QuerydslBindings bindings, @NonNull final QOrder order) {
         bindings.bind(order.email)
                 .first(StringExpression::containsIgnoreCase);
+        bindings.excluding(order.id);
+        bindings.excluding(order.currency);
+        bindings.excluding(order.customer);
         bindings.excluding(order.capturedAmount);
         bindings.excluding(order.previousStatus);
         bindings.excluding(order.paymentId);
