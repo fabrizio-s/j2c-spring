@@ -16,6 +16,7 @@ import com.j2c.j2c.service.dto.OrderFulfillmentLineDTO;
 import com.j2c.j2c.service.dto.OrderLineDTO;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
+import com.j2c.j2c.service.input.UpdateOrderFulfillmentForm;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.service.mapper.OrderServiceMapper;
 import com.querydsl.core.types.Predicate;
@@ -27,7 +28,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Validated
@@ -118,20 +118,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO addFulfillmentLines(final Long orderId, final Long fulfillmentId, final List<Line> lines) {
-        final AddFulfillmentLinesResult result = domainService.addFulfillmentLines(orderId, fulfillmentId, lines);
-        return mapper.toOrderDTO(result);
-    }
-
-    @Override
-    public OrderDTO updateFulfillmentLineQuantities(final Long orderId, final Long fulfillmentId, final List<Line> lines) {
-        final UpdateFulfillmentLineQuantitiesResult result = domainService.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines);
-        return mapper.toOrderDTO(result);
-    }
-
-    @Override
-    public OrderDTO deleteFulfillmentLines(final Long orderId, final Long fulfillmentId, final Set<Long> lineIds) {
-        final DeleteFulfillmentLinesResult result = domainService.deleteFulfillmentLines(orderId, fulfillmentId, lineIds);
+    public OrderDTO updateFulfillment(final Long orderId, final Long fulfillmentId, final UpdateOrderFulfillmentForm form) {
+        final UpdateFulfillmentResult result = domainService.updateFulfillment(orderId, fulfillmentId, form);
         return mapper.toOrderDTO(result);
     }
 

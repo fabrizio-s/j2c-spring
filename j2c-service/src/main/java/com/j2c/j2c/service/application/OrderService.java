@@ -6,6 +6,7 @@ import com.j2c.j2c.service.dto.OrderFulfillmentLineDTO;
 import com.j2c.j2c.service.dto.OrderLineDTO;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
+import com.j2c.j2c.service.input.UpdateOrderFulfillmentForm;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
@@ -45,11 +46,7 @@ public interface OrderService {
 
     OrderDTO createFulfillment(Long orderId, List<Line> lines);
 
-    OrderDTO addFulfillmentLines(Long orderId, Long fulfillmentId, List<Line> lines);
-
-    OrderDTO updateFulfillmentLineQuantities(Long orderId, Long fulfillmentId, List<Line> lines);
-
-    OrderDTO deleteFulfillmentLines(Long orderId, Long fulfillmentId, Set<Long> lineIds);
+    OrderDTO updateFulfillment(Long orderId, Long fulfillmentId, UpdateOrderFulfillmentForm form);
 
     OrderDTO completeFulfillment(Long orderId, Long fulfillmentId, CompleteOrderFulfillmentForm form);
 

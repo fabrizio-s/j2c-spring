@@ -13,6 +13,7 @@ import com.j2c.j2c.service.exception.ResourceNotFoundException;
 import com.j2c.j2c.service.exception.ServiceException;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
+import com.j2c.j2c.service.input.UpdateOrderFulfillmentForm;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.service.test.*;
 import org.junit.jupiter.api.Test;
@@ -326,13 +327,13 @@ class OrderServiceImplTest extends BaseServiceTest {
     }
 
     @Test
-    public void addFulfillmentLines_NullOrderId_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_NullOrderId_ShouldThrowInvalidInputException() {
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(null, fulfillmentId, lines)
+                () -> service.updateFulfillment(null, fulfillmentId, form)
         );
         assertTrue(
                 exception.getErrors().stream()
@@ -341,13 +342,13 @@ class OrderServiceImplTest extends BaseServiceTest {
     }
 
     @Test
-    public void addFulfillmentLines_NullFulfillmentId_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_NullFulfillmentId_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, null, lines)
+                () -> service.updateFulfillment(orderId, null, form)
         );
         assertTrue(
                 exception.getErrors().stream()
@@ -356,65 +357,86 @@ class OrderServiceImplTest extends BaseServiceTest {
     }
 
     @Test
-    public void addFulfillmentLines_NullLines_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_NullForm_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, null)
+                () -> service.updateFulfillment(orderId, fulfillmentId, null)
         );
         assertTrue(
                 exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not be empty"))
+                        .anyMatch(e -> e.equals("form must not be null"))
         );
     }
 
     @Test
-    public void addFulfillmentLines_EmptyLines_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_AnyLineToAddIsNull_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = Collections.emptyList();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        form.getLinesToAdd().add(null);
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(
                 exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not be empty"))
+                        .peek(System.out::println)
+                        .anyMatch(e -> e.equals("lines to add must not contain null elements"))
         );
     }
 
     @Test
-    public void addFulfillmentLines_AnyLineIsNull_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_AnyLineToUpdateIsNull_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
-        lines.add(null);
+        form.getLinesToUpdate().add(null);
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(
                 exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not contain null elements"))
+                        .anyMatch(e -> e.equals("lines to update must not contain null elements"))
         );
     }
 
     @Test
-    public void addFulfillmentLines_AnyLineHasNullId_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_AnyLineIdToDeleteIsNull_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
-        lines.add(Line.builder().id(null).quantity(1).build());
+        form.getLineIdsToDelete().add(null);
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(
+                exception.getErrors().stream()
+                        .anyMatch(e -> e.equals("line ids to delete must not contain null elements"))
+        );
+    }
+
+    @Test
+    public void updateFulfillment_AnyLineToAddHasNullId_ShouldThrowInvalidInputException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        form.getLinesToAdd().add(Line.builder().id(null).quantity(1).build());
+
+        final InvalidInputException exception = assertThrows(
+                InvalidInputException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(
                 exception.getErrors().stream()
@@ -423,16 +445,34 @@ class OrderServiceImplTest extends BaseServiceTest {
     }
 
     @Test
-    public void addFulfillmentLines_AnyLineHasNonPositiveQuantity_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_AnyLineToUpdateHasNullId_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
-        lines.add(Line.builder().id(1L).quantity(-1).build());
+        form.getLinesToUpdate().add(Line.builder().id(null).quantity(1).build());
 
         final InvalidInputException exception = assertThrows(
                 InvalidInputException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(
+                exception.getErrors().stream()
+                        .anyMatch(e -> e.equals("id must not be null"))
+        );
+    }
+
+    @Test
+    public void updateFulfillment_AnyLineToAddHasNonPositiveQuantity_ShouldThrowInvalidInputException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        form.getLinesToAdd().add(Line.builder().id(1L).quantity(-1).build());
+
+        final InvalidInputException exception = assertThrows(
+                InvalidInputException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(
                 exception.getErrors().stream()
@@ -441,733 +481,391 @@ class OrderServiceImplTest extends BaseServiceTest {
     }
 
     @Test
-    public void addFulfillmentLines_OrderDoesNotExist_ShouldThrowResourceNotFoundException() {
+    public void updateFulfillment_AnyLineToUpdateHasNonPositiveQuantity_ShouldThrowInvalidInputException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
-        stubber.addFulfillmentLines()
+        form.getLinesToUpdate().add(Line.builder().id(1L).quantity(-1).build());
+
+        final InvalidInputException exception = assertThrows(
+                InvalidInputException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(
+                exception.getErrors().stream()
+                        .anyMatch(e -> e.equals("quantity must be greater than 0"))
+        );
+    }
+
+    @Test
+    public void updateFulfillment_OrderDoesNotExist_ShouldThrowResourceNotFoundException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        stubber.updateFulfillment()
                 .stub();
 
         final ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order", orderId)));
     }
 
     @Test
-    public void addFulfillmentLines_FulfillmentDoesNotExist_ShouldThrowResourceNotFoundException() {
+    public void updateFulfillment_FulfillmentDoesNotExist_ShouldThrowResourceNotFoundException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        stubber.updateFulfillment()
                 .order(order)
-                .lines(orderLinesWithIdsForOrder(lines, order))
                 .stub();
 
         final ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order fulfillment", fulfillmentId)));
     }
 
     @Test
-    public void addFulfillmentLines_AnyOrderLineDoesNotExist_ShouldThrowResourceNotFoundException() {
+    public void updateFulfillment_FulfillmentDoesNotBelongToOrder_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        stubber.updateFulfillment()
+                .order(orderWithIdAndStatus(orderId, OrderStatus.PROCESSING))
+                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order().build()))
+                .stub();
+
+        final ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_DOES_NOT_BELONG_TO_ORDER, fulfillmentId, orderId)));
+    }
+
+    @Test
+    public void updateFulfillment_OrderIsNotProcessable_ShouldThrowServiceException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        final Order order = orderWithIdAndStatus(orderId, OrderStatus.FULFILLED);
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
+                .order(order)
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
+                .stub();
+
+        final ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(exception.getMessage().matches(String.format(ORDER_NOT_PROCESSABLE, orderId, "[A-Z]+")));
+    }
+
+    @Test
+    public void updateFulfillment_AnyLineToAddHasOrderLineThatDoesNotExist_ShouldThrowResourceNotFoundException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
                 .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(removeFirst(orderLinesWithIdsForOrder(lines, order)))
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(removeFirst(orderLinesWithIdsForOrder(form.getLinesToAdd(), order)))
                 .stub();
 
         final ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(RESOURCES_NOT_FOUND, "order line", "[0-9]+")));
     }
 
     @Test
-    public void addFulfillmentLines_FulfillmentDoesNotBelongToOrder_ShouldThrowServiceException() {
+    public void updateFulfillment_AnyFulfillmentLineToUpdateDoesNotExist_ShouldThrowResourceNotFoundException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
                 .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order().build()))
-                .lines(orderLinesWithIdsForOrder(lines, order))
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(removeFirst(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment)))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
                 .stub();
 
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+        final ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
-        assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_DOES_NOT_BELONG_TO_ORDER, fulfillmentId, orderId)));
+        assertTrue(
+                exception.getMessage().matches(String.format(RESOURCES_NOT_FOUND, "order fulfillment line", "[0-9]+")),
+                exception.getMessage()
+        );
     }
 
     @Test
-    public void addFulfillmentLines_AnyOrderLineDoesNotBelongToOrder_ShouldThrowServiceException() {
+    public void updateFulfillment_AnyLineToAddHasOrderLineThatDoesNotBelongToOrder_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
                 .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(transformFirst(orderLinesWithIdsForOrder(lines, order), this::setToDifferentOrder))
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(transformFirst(orderLinesWithIdsForOrder(form.getLinesToAdd(), order), this::setToDifferentOrder))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(LINE_DOES_NOT_BELONG_TO_ORDER, "[0-9]+", orderId)));
     }
 
     @Test
-    public void addFulfillmentLines_OrderIsNotProcessable_ShouldThrowServiceException() {
+    public void updateFulfillment_FulfillmentIsAlreadyCompleted_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.FULFILLED);
-        stubber.addFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(orderLinesWithIdsForOrder(lines, order))
-                .stub();
-
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().matches(String.format(ORDER_NOT_PROCESSABLE, orderId, "[A-Z]+")));
-    }
-
-    @Test
-    public void addFulfillmentLines_FulfillmentIsAlreadyCompleted_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = orderFulfillment()
+                .id(fulfillmentId)
                 .order(order)
-                .fulfillment(
-                        orderFulfillment()
-                                .id(fulfillmentId)
-                                .order(order)
-                                .completed(true)
-                                .build()
-                )
-                .lines(orderLinesWithIdsForOrder(lines, order))
+                .completed(true)
+                .build();
+        stubber.updateFulfillment()
+                .order(order)
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_ALREADY_COMPLETED, fulfillmentId)));
     }
 
     @Test
-    public void addFulfillmentLines_AnyOrderLineDoesNotRequireShipping_ShouldThrowServiceException() {
+    public void updateFulfillment_AnyLineToAddHasOrderLineThatDoesNotRequireShipping_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
                 .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(transformFirst(orderLinesWithIdsForOrder(lines, order), this::setNoShippingRequired))
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(transformFirst(orderLinesWithIdsForOrder(form.getLinesToAdd(), order), this::setNoShippingRequired))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(ORDER_LINE_DOES_NOT_REQUIRE_SHIPPING, "[0-9]+")));
     }
 
     @Test
-    public void addFulfillmentLines_AnyLineQuantityIsGreaterThanAssignableQuantity_ShouldThrowServiceException() {
+    public void updateFulfillment_AnyLineToAddQuantityIsGreaterThanAssignableQuantity_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
                 .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(transformFirst(orderLinesWithIdsForOrder(lines, order), this::setAlreadyFulfilled))
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(transformFirst(orderLinesWithIdsForOrder(form.getLinesToAdd(), order), this::setAlreadyFulfilled))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.addFulfillmentLines(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(INSUFFICIENT_ORDER_LINE_ASSIGNABLE_QUANTITY, "[0-9]+", "[0-9]+")));
     }
 
     @Test
-    public void addFulfillmentLines_HappyPath_ShouldReturnUpdatedOrderLinesAndAddedFulfillmentLines() {
+    public void updateFulfillment_AnyLineToUpdateDoesNotBelongToFulfillment_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.addFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillmentWithIdForOrder(fulfillmentId, order))
-                .lines(orderLinesWithIdsForOrder(lines, order))
-                .stub();
-
-        final OrderDTO orderDTO = service.addFulfillmentLines(orderId, fulfillmentId, lines);
-
-        assertNotNull(orderDTO);
-        assertEquals(lines.size(), orderDTO.getUpdatedLines().size());
-        assertEquals(lines.size(), orderDTO.getFulfillment().getAddedLines().size());
-    }
-
-    @Test
-    public void addFulfillmentLines_FulfillmentLineAlreadyExistsForOrderLine_ShouldNotAddNewFulfillmentLine() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
         final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        final List<OrderLine> orderLines = orderLinesWithIdsForOrder(lines, order);
-        orderFulfillmentLine()
-                .id(fulfillmentId)
-                .fulfillment(fulfillment)
-                .orderLine(orderLines.get(0))
-                .build();
-        stubber.addFulfillmentLines()
+        stubber.updateFulfillment()
                 .order(order)
                 .fulfillment(fulfillment)
-                .lines(orderLines)
-                .stub();
-
-        final OrderDTO orderDTO = service.addFulfillmentLines(orderId, fulfillmentId, lines);
-
-        final List<OrderFulfillmentLineDTO> addedFulfillmentLinesDTO = orderDTO.getFulfillment().getAddedLines();
-
-        assertEquals(lines.size() - 1, addedFulfillmentLinesDTO.size());
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_NullOrderId_ShouldThrowInvalidInputException() {
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(null, fulfillmentId, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("order id must not be null"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_NullFulfillmentId_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final List<Line> lines = hpLines();
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, null, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("fulfillment id must not be null"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_NullLines_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, null)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not be empty"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_EmptyLines_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = Collections.emptyList();
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not be empty"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyLineIsNull_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        lines.add(null);
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("lines must not contain null elements"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyLineHasNullId_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        lines.add(Line.builder().id(null).quantity(1).build());
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("id must not be null"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyLineHasNonPositiveQuantity_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        lines.add(Line.builder().id(1L).quantity(-1).build());
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("quantity must be greater than 0"))
-        );
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_OrderDoesNotExist_ShouldThrowResourceNotFoundException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        stubber.updateFulfillmentLineQuantities()
-                .stub();
-
-        final ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order", orderId)));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_FulfillmentDoesNotExist_ShouldThrowResourceNotFoundException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .stub();
-
-        final ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order fulfillment", fulfillmentId)));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyFulfillmentLineDoesNotExist_ShouldThrowResourceNotFoundException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(removeFirst(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment)))
-                .stub();
-
-        final ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().matches(String.format(RESOURCES_NOT_FOUND, "order fulfillment line", "[0-9]+")));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_FulfillmentDoesNotBelongToOrder_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order().build());
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment))
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), orderFulfillment().build()))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_DOES_NOT_BELONG_TO_ORDER, fulfillmentId, orderId)));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyLineDoesNotBelongToFulfillment_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(lines, orderFulfillment().build()))
-                .stub();
-
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(LINE_DOES_NOT_BELONG_TO_FULFILLMENT, "[0-9]+", fulfillmentId)));
     }
 
     @Test
-    public void updateFulfillmentLineQuantities_OrderIsNotProcessable_ShouldThrowServiceException() {
+    public void updateFulfillment_AnyFulfillmentLineToDeleteDoesNotBelongToFulfillment_ShouldThrowServiceException() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.CREATED);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment))
-                .stub();
-
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().matches(String.format(ORDER_NOT_PROCESSABLE, orderId, "[A-Z]+")));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_FulfillmentIsAlreadyCompleted_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = orderFulfillment()
-                .id(fulfillmentId)
-                .order(order)
-                .completed(true)
-                .build();
-        stubber.updateFulfillmentLineQuantities()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment))
-                .stub();
-
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
-        );
-        assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_ALREADY_COMPLETED, fulfillmentId)));
-    }
-
-    @Test
-    public void updateFulfillmentLineQuantities_AnyLineQuantityIsGreaterThanAssignableQuantity_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
         final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.updateFulfillmentLineQuantities()
+        stubber.updateFulfillment()
                 .order(order)
                 .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(transformFirst(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment), l -> setAlreadyFulfilled(l.getOrderLine())))
+                .fulfillmentLinesToDelete(transformFirst(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment), this::setToDifferentFulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
                 .stub();
 
         final ServiceException exception = assertThrows(
                 ServiceException.class,
-                () -> service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines)
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
+        );
+        assertTrue(exception.getMessage().matches(String.format(LINE_DOES_NOT_BELONG_TO_FULFILLMENT, "[0-9]+", fulfillmentId)));
+    }
+
+    @Test
+    public void updateFulfillment_AnyLineToUpdateQuantityIsGreaterThanAssignableQuantity_ShouldThrowServiceException() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
+                .order(order)
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(transformFirst(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment), l -> setAlreadyFulfilled(l.getOrderLine())))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
+                .stub();
+
+        final ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> service.updateFulfillment(orderId, fulfillmentId, form)
         );
         assertTrue(exception.getMessage().matches(String.format(INSUFFICIENT_ORDER_LINE_ASSIGNABLE_QUANTITY, "[0-9]+", "[0-9]+")));
     }
 
     @Test
-    public void updateFulfillmentLineQuantities_HappyPath_ShouldReturnUpdatedOrderLinesAndFulfillmentLines() {
+    public void updateFulfillment_HappyPath_ShouldReturnUpdatedOrderLinesAndAddedAndUpdatedFulfillmentLines() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-        final List<Line> lines = hpLines();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
         final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.updateFulfillmentLineQuantities()
+        stubber.updateFulfillment()
                 .order(order)
                 .fulfillment(fulfillment)
-                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(lines, fulfillment))
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
                 .stub();
 
-        final OrderDTO orderDTO = service.updateFulfillmentLineQuantities(orderId, fulfillmentId, lines);
+        final OrderDTO orderDTO = service.updateFulfillment(orderId, fulfillmentId, form);
 
         assertNotNull(orderDTO);
-        assertEquals(lines.size(), orderDTO.getUpdatedLines().size());
-        assertEquals(lines.size(), orderDTO.getFulfillment().getUpdatedLines().size());
+        assertEquals(
+                form.getLinesToUpdate().size() + form.getLinesToAdd().size() + form.getLineIdsToDelete().size(),
+                orderDTO.getUpdatedLines().size()
+        );
+        assertEquals(form.getLinesToAdd().size(), orderDTO.getFulfillment().getAddedLines().size());
+        assertEquals(form.getLineIdsToDelete().size(), orderDTO.getFulfillment().getUpdatedLines().size());
     }
 
     @Test
-    public void deleteFulfillmentLines_NullOrderId_ShouldThrowInvalidInputException() {
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.deleteFulfillmentLines(null, fulfillmentId, lineIds)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("order id must not be null"))
-        );
-    }
-
-    @Test
-    public void deleteFulfillmentLines_NullFulfillmentId_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.deleteFulfillmentLines(orderId, null, lineIds)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("fulfillment id must not be null"))
-        );
-    }
-
-    @Test
-    public void deleteFulfillmentLines_NullLines_ShouldThrowInvalidInputException() {
+    public void updateFulfillment_FulfillmentLineAlreadyExistsForOrderLineOfAnyLineToAdd_ShouldAddToExistingFulfillmentLine() {
         final Long orderId = 1L;
         final Long fulfillmentId = 1L;
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, null)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("line ids must not be empty"))
-        );
-    }
-
-    @Test
-    public void deleteFulfillmentLines_AnyLineIdIsNull_ShouldThrowInvalidInputException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        lineIds.add(null);
-
-        final InvalidInputException exception = assertThrows(
-                InvalidInputException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds)
-        );
-        assertTrue(
-                exception.getErrors().stream()
-                        .anyMatch(e -> e.equals("line ids must not contain null elements"))
-        );
-    }
-
-    @Test
-    public void deleteFulfillmentLines_OrderDoesNotExist_ShouldThrowResourceNotFoundException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        stubber.deleteFulfillmentLines()
-                .stub();
-
-        final ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds)
-        );
-        assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order", orderId)));
-    }
-
-    @Test
-    public void deleteFulfillmentLines_FulfillmentDoesNotExist_ShouldThrowResourceNotFoundException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        stubber.deleteFulfillmentLines()
-                .order(orderWithIdAndStatus(orderId, OrderStatus.PROCESSING))
-                .stub();
-
-        final ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds)
-        );
-        assertTrue(exception.getMessage().contains(String.format(RESOURCE_NOT_FOUND, "order fulfillment", fulfillmentId)));
-    }
-
-    @Test
-    public void deleteFulfillmentLines_OrderIsNotProcessable_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.FULFILLED);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.deleteFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(lineIds, fulfillment))
-                .stub();
-
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds)
-        );
-        assertTrue(exception.getMessage().matches(String.format(ORDER_NOT_PROCESSABLE, orderId, "[A-Z]+")));
-    }
-
-    @Test
-    public void deleteFulfillmentLines_FulfillmentIsAlreadyCompleted_ShouldThrowServiceException() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
 
         final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = orderFulfillment()
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        final List<OrderLine> orderLines = orderLinesWithIdsForOrder(form.getLinesToAdd(), order);
+        orderFulfillmentLine()
                 .id(fulfillmentId)
-                .order(order)
-                .completed(true)
+                .fulfillment(fulfillment)
+                .orderLine(orderLines.get(0))
                 .build();
-        stubber.deleteFulfillmentLines()
+        stubber.updateFulfillment()
                 .order(order)
                 .fulfillment(fulfillment)
-                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(lineIds, fulfillment))
+                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLines)
                 .stub();
 
-        final ServiceException exception = assertThrows(
-                ServiceException.class,
-                () -> service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds)
+        final OrderDTO orderDTO = service.updateFulfillment(orderId, fulfillmentId, form);
+
+        final List<OrderFulfillmentLineDTO> addedFulfillmentLinesDTO = orderDTO.getFulfillment().getAddedLines();
+
+        assertEquals(form.getLinesToAdd().size() - 1, addedFulfillmentLinesDTO.size());
+    }
+
+    @Test
+    public void updateFulfillment_AnyFulfillmentLineToDeleteDoesNotExist_ShouldIgnoreAndSkip() {
+        final Long orderId = 1L;
+        final Long fulfillmentId = 1L;
+        final UpdateOrderFulfillmentForm form = hpUpdateOrderFulfillmentForm().build();
+
+        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
+        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
+        stubber.updateFulfillment()
+                .order(order)
+                .fulfillment(fulfillment)
+                .fulfillmentLinesToDelete(removeFirst(fulfillmentLinesWithIdsForFulfillment(form.getLineIdsToDelete(), fulfillment)))
+                .fulfillmentLinesToUpdate(fulfillmentLinesWithIdsForFulfillment(form.getLinesToUpdate(), fulfillment))
+                .orderLinesToAdd(orderLinesWithIdsForOrder(form.getLinesToAdd(), order))
+                .stub();
+
+        final OrderDTO orderDTO = service.updateFulfillment(orderId, fulfillmentId, form);
+
+        assertNotNull(orderDTO);
+        assertEquals(
+                form.getLinesToUpdate().size() + form.getLinesToAdd().size() + form.getLineIdsToDelete().size() - 1,
+                orderDTO.getUpdatedLines().size()
         );
-        assertTrue(exception.getMessage().matches(String.format(FULFILLMENT_ALREADY_COMPLETED, fulfillmentId)));
-    }
-
-    @Test
-    public void deleteFulfillmentLines_HappyPath_ShouldReturnUpdatedOrderLines() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.deleteFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToDelete(fulfillmentLinesWithIdsForFulfillment(lineIds, fulfillment))
-                .stub();
-
-        final OrderDTO orderDTO = service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds);
-
-        assertNotNull(orderDTO);
-        assertEquals(lineIds.size(), orderDTO.getUpdatedLines().size());
-    }
-
-    @Test
-    public void deleteFulfillmentLines_AnyFulfillmentLineDoesNotExist_ShouldIgnoreAndSkip() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.deleteFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToDelete(removeFirst(fulfillmentLinesWithIdsForFulfillment(lineIds, fulfillment)))
-                .stub();
-
-        final OrderDTO orderDTO = service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds);
-
-        assertNotNull(orderDTO);
-        assertEquals(lineIds.size() - 1, orderDTO.getUpdatedLines().size());
-    }
-
-    @Test
-    public void deleteFulfillmentLines_AnyFulfillmentLineDoesNotBelongToFulfillment_ShouldIgnoreAndSkip() {
-        final Long orderId = 1L;
-        final Long fulfillmentId = 1L;
-        final Set<Long> lineIds = hpLineIds();
-
-        final Order order = orderWithIdAndStatus(orderId, OrderStatus.PROCESSING);
-        final OrderFulfillment fulfillment = fulfillmentWithIdForOrder(fulfillmentId, order);
-        stubber.deleteFulfillmentLines()
-                .order(order)
-                .fulfillment(fulfillment)
-                .fulfillmentLinesToDelete(transformFirst(fulfillmentLinesWithIdsForFulfillment(lineIds, fulfillment), this::setToDifferentFulfillment))
-                .stub();
-
-        final OrderDTO orderDTO = service.deleteFulfillmentLines(orderId, fulfillmentId, lineIds);
-
-        assertNotNull(orderDTO);
-        assertEquals(lineIds.size() - 1, orderDTO.getUpdatedLines().size());
     }
 
     @Test
@@ -2088,6 +1786,29 @@ class OrderServiceImplTest extends BaseServiceTest {
     private static Set<Long> hpLineIds() {
         final Set<Long> lineIds = Set.of(1L, 2L, 3L);
         return new HashSet<>(lineIds);
+    }
+
+    private static UpdateOrderFulfillmentForm.UpdateOrderFulfillmentFormBuilder hpUpdateOrderFulfillmentForm() {
+        return UpdateOrderFulfillmentForm.builder()
+                .linesToAdd(
+                        new ArrayList<>(
+                                List.of(
+                                        Line.builder().id(111L).quantity(3).build(),
+                                        Line.builder().id(222L).quantity(2).build(),
+                                        Line.builder().id(333L).quantity(4).build()
+                                )
+                        )
+                )
+                .linesToUpdate(
+                        new ArrayList<>(
+                                List.of(
+                                        Line.builder().id(4L).quantity(2).build(),
+                                        Line.builder().id(5L).quantity(1).build(),
+                                        Line.builder().id(6L).quantity(3).build()
+                                )
+                        )
+                )
+                .lineIdsToDelete(new HashSet<>(Set.of(7L, 8L, 9L)));
     }
 
     private static CompleteOrderFulfillmentForm.CompleteOrderFulfillmentFormBuilder hpCompleteOrderFulfillmentForm() {

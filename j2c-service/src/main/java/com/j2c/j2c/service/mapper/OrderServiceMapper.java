@@ -67,22 +67,12 @@ public class OrderServiceMapper {
         return orderWithFulfillmentAndUpdatedLines(result.getOrder(), fulfillmentDTOBuilder.build(), result.getUpdatedLines());
     }
 
-    public OrderDTO toOrderDTO(@NonNull final AddFulfillmentLinesResult result) {
+    public OrderDTO toOrderDTO(@NonNull final UpdateFulfillmentResult result) {
         final OrderFulfillmentDTOBuilder fulfillmentDTOBuilder = fulfillmentDTOMapper.fromEntity(result.getFulfillment());
         fulfillmentDTOBuilder.addedLines(fulfillmentLineDTOMapper.fromEntities(result.getAddedFulfillmentLines()));
-
-        return orderWithFulfillmentAndUpdatedLines(result.getOrder(), fulfillmentDTOBuilder.build(), result.getUpdatedLines());
-    }
-
-    public OrderDTO toOrderDTO(@NonNull final UpdateFulfillmentLineQuantitiesResult result) {
-        final OrderFulfillmentDTOBuilder fulfillmentDTOBuilder = fulfillmentDTOMapper.fromEntity(result.getFulfillment());
         fulfillmentDTOBuilder.updatedLines(fulfillmentLineDTOMapper.fromEntities(result.getUpdatedFulfillmentLines()));
 
-        return orderWithFulfillmentAndUpdatedLines(result.getOrder(), fulfillmentDTOBuilder.build(), result.getUpdatedLines());
-    }
-
-    public OrderDTO toOrderDTO(@NonNull final DeleteFulfillmentLinesResult result) {
-        return orderWithFulfillmentAndUpdatedLines(result.getOrder(), null, result.getUpdatedLines());
+        return orderWithFulfillmentAndUpdatedLines(result.getOrder(), fulfillmentDTOBuilder.build(), result.getUpdatedOrderLines());
     }
 
     public OrderDTO toOrderDTO(@NonNull final CompleteFulfillmentResult result) {

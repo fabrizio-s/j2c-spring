@@ -8,6 +8,7 @@ import com.j2c.j2c.service.dto.OrderFulfillmentLineDTO;
 import com.j2c.j2c.service.dto.OrderLineDTO;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
+import com.j2c.j2c.service.input.UpdateOrderFulfillmentForm;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.web.security.annotation.CanProcessOrders;
 import com.j2c.j2c.web.security.annotation.HasReadAccess;
@@ -24,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.j2c.j2c.domain.enums.Authorities.PROCESS_ORDERS;
 import static com.j2c.j2c.domain.enums.Authorities.READ_ACCESS;
@@ -172,53 +172,17 @@ public class OrderController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @CanProcessOrders
     @Operation(security = @SecurityRequirement(name = "JWT"),
-            summary = "Adds lines to the fulfillment with the specified id",
-            description = "Returns the updated order and order lines, and the updated fulfillment and its added lines. " +
+            summary = "Updates a fulfillment for the order with the given id",
+            description = "Returns the updated order and order lines, and the updated fulfillment and its added/updated lines. " +
                     "The order must have status CONFIRMED, PROCESSING, or PARTIALLY_FULFILLED. " +
                     "The fulfillment must not be completed. " +
                     "Requires " + PROCESS_ORDERS + " authority (Staff, Admin).")
-    public OrderDTO addFulfillmentLines(
+    public OrderDTO updateFulfillment(
             @PathVariable final Long orderId,
             @PathVariable final Long fulfillmentId,
-            @RequestBody final List<Line> payload
+            @RequestBody final UpdateOrderFulfillmentForm payload
     ) {
-        return orderService.addFulfillmentLines(orderId, fulfillmentId, payload);
-    }
-
-    @PatchMapping(value = "/api/orders/{orderId}/fulfillments/{fulfillmentId}/lines",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @CanProcessOrders
-    @Operation(security = @SecurityRequirement(name = "JWT"),
-            summary = "Bulk updates the reserved quantities of the fulfillment lines with the given ids",
-            description = "Returns the updated order and order lines, and the updated fulfillment and its lines. " +
-                    "The order must have status CONFIRMED, PROCESSING, or PARTIALLY_FULFILLED. " +
-                    "The fulfillment must not be completed. " +
-                    "Requires " + PROCESS_ORDERS + " authority (Staff, Admin).")
-    public OrderDTO updateFulfillmentLineQuantities(
-            @PathVariable final Long orderId,
-            @PathVariable final Long fulfillmentId,
-            @RequestBody final List<Line> payload
-    ) {
-        return orderService.updateFulfillmentLineQuantities(orderId, fulfillmentId, payload);
-    }
-
-    @DeleteMapping(value = "/api/orders/{orderId}/fulfillments/{fulfillmentId}/lines",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @CanProcessOrders
-    @Operation(security = @SecurityRequirement(name = "JWT"),
-            summary = "Bulk deletes the fulfillment lines with the given ids",
-            description = "Returns the updated order and order lines. " +
-                    "The order must have status CONFIRMED, PROCESSING, or PARTIALLY_FULFILLED. " +
-                    "The fulfillment must not be completed. " +
-                    "Requires " + PROCESS_ORDERS + " authority (Staff, Admin).")
-    public OrderDTO deleteFulfillmentLines(
-            @PathVariable final Long orderId,
-            @PathVariable final Long fulfillmentId,
-            @RequestBody final Set<Long> payload
-    ) {
-        return orderService.deleteFulfillmentLines(orderId, fulfillmentId, payload);
+        return orderService.updateFulfillment(orderId, fulfillmentId, payload);
     }
 
     @PostMapping(value = "/api/orders/{orderId}/fulfillments/{fulfillmentId}/complete",

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.context.TestComponent;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,43 +36,20 @@ public class OrderServiceStubber {
         mockFindAllLinesById(lines);
     }
 
-    @Builder(builderClassName = "MockAddFulfillmentLines",
-            builderMethodName = "addFulfillmentLines",
+    @Builder(builderClassName = "MockUpdateFulfillment",
+            builderMethodName = "updateFulfillment",
             buildMethodName = "stub")
-    private void _addFulfillmentLines(
-            final Order order,
-            final List<OrderLine> lines,
-            final OrderFulfillment fulfillment
-    ) {
-        mockFindOrderById(order);
-        mockFindAllLinesById(lines);
-        mockFindFulfillmentById(fulfillment);
-    }
-
-    @Builder(builderClassName = "MockUpdateFulfillmentLineQuantities",
-            builderMethodName = "updateFulfillmentLineQuantities",
-            buildMethodName = "stub")
-    private void _updateFulfillmentLineQuantities(
+    private void _updateFulfillment(
             final Order order,
             final OrderFulfillment fulfillment,
-            final List<OrderFulfillmentLine> fulfillmentLinesToUpdate
-    ) {
+            final List<OrderFulfillmentLine> fulfillmentLinesToDelete,
+            final List<OrderFulfillmentLine> fulfillmentLinesToUpdate,
+            final List<OrderLine> orderLinesToAdd
+            ) {
         mockFindOrderById(order);
+        mockFindAllLinesById(orderLinesToAdd);
         mockFindFulfillmentById(fulfillment);
-        mockFindAllFulfillmentLinesById(fulfillmentLinesToUpdate);
-    }
-
-    @Builder(builderClassName = "MockDeleteFulfillmentLines",
-            builderMethodName = "deleteFulfillmentLines",
-            buildMethodName = "stub")
-    private void _deleteFulfillmentLines(
-            final Order order,
-            final OrderFulfillment fulfillment,
-            final List<OrderFulfillmentLine> fulfillmentLinesToDelete
-    ) {
-        mockFindOrderById(order);
-        mockFindFulfillmentById(fulfillment);
-        mockFindAllFulfillmentLinesById(fulfillmentLinesToDelete);
+        mockFindAllFulfillmentLinesById(fulfillmentLinesToDelete, fulfillmentLinesToUpdate);
     }
 
     @Builder(builderClassName = "MockCompleteFulfillment",
@@ -156,11 +134,10 @@ public class OrderServiceStubber {
         }
     }
 
-    private void mockFindAllFulfillmentLinesById(final List<OrderFulfillmentLine> fulfillmentLines) {
-        if (fulfillmentLines != null) {
-            when(mockBeanProvider.getOrderFulfillmentLineRepository().findAllById(anySet()))
-                    .thenReturn(fulfillmentLines);
-        }
+    private void mockFindAllFulfillmentLinesById(final List<OrderFulfillmentLine> fulfillmentLinesToDelete, final List<OrderFulfillmentLine> fulfillmentLinesToUpdate) {
+        when(mockBeanProvider.getOrderFulfillmentLineRepository().findAllById(anySet()))
+                .thenReturn(fulfillmentLinesToDelete != null ? fulfillmentLinesToDelete : Collections.emptyList())
+                .thenReturn(fulfillmentLinesToUpdate != null ? fulfillmentLinesToUpdate : Collections.emptyList());
     }
 
 }

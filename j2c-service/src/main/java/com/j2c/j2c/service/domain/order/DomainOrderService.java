@@ -10,6 +10,7 @@ import com.j2c.j2c.domain.repository.OrderLineRepository;
 import com.j2c.j2c.domain.repository.OrderRepository;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
+import com.j2c.j2c.service.input.UpdateOrderFulfillmentForm;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
 import com.j2c.j2c.service.util.MergedLines;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.j2c.j2c.domain.util.J2cUtils.optional;
@@ -66,65 +65,34 @@ public class DomainOrderService {
                 .build();
     }
 
-    public AddFulfillmentLinesResult addFulfillmentLines(
+    public UpdateFulfillmentResult updateFulfillment(
             @NotNull final Long orderId,
             @NotNull final Long fulfillmentId,
-            @NotEmpty final List<@NotNull @Valid Line> lines
+            @NotNull @Valid final UpdateOrderFulfillmentForm form
     ) {
         final Order order = orderRepository.findById(orderId);
 
         final OrderFulfillment fulfillment = fulfillmentRepository.findById(fulfillmentId)
                 .verifyBelongsToOrder(order);
 
-        final List<OrderFulfillmentLine> fulfillmentLines = addLines(fulfillment, lines);
+        final List<OrderLine> orderLines = removeLines(fulfillment, form.getLineIdsToDelete());
 
-        final List<OrderLine> orderLines = getOrderLines(fulfillmentLines);
+        final List<OrderFulfillmentLine> updatedFulfillmentLines = setQuantities(fulfillment, form.getLinesToUpdate());
 
-        return AddFulfillmentLinesResult.builder()
+        final List<OrderFulfillmentLine> addedFulfillmentLines = addLines(fulfillment, form.getLinesToAdd());
+
+        orderLines.addAll(getOrderLines(updatedFulfillmentLines));
+
+        orderLines.addAll(getOrderLines(addedFulfillmentLines));
+
+        removeDuplicates(orderLines);
+
+        return UpdateFulfillmentResult.builder()
                 .order(order)
-                .updatedLines(orderLines)
+                .updatedOrderLines(orderLines)
                 .fulfillment(fulfillment)
-                .addedFulfillmentLines(fulfillmentLines)
-                .build();
-    }
-
-    public UpdateFulfillmentLineQuantitiesResult updateFulfillmentLineQuantities(
-            @NotNull final Long orderId,
-            @NotNull final Long fulfillmentId,
-            @NotEmpty final List<@NotNull @Valid Line> lines
-    ) {
-        final Order order = orderRepository.findById(orderId);
-
-        final OrderFulfillment fulfillment = fulfillmentRepository.findById(fulfillmentId)
-                .verifyBelongsToOrder(order);
-
-        final List<OrderFulfillmentLine> fulfillmentLines = setQuantities(fulfillment, lines);
-
-        final List<OrderLine> orderLines = getOrderLines(fulfillmentLines);
-
-        return UpdateFulfillmentLineQuantitiesResult.builder()
-                .order(order)
-                .updatedLines(orderLines)
-                .fulfillment(fulfillment)
-                .updatedFulfillmentLines(fulfillmentLines)
-                .build();
-    }
-
-    public DeleteFulfillmentLinesResult deleteFulfillmentLines(
-            @NotNull final Long orderId,
-            @NotNull final Long fulfillmentId,
-            @NotEmpty final Set<@NotNull Long> lineIds
-    ) {
-        final Order order = orderRepository.findById(orderId);
-
-        final OrderFulfillment fulfillment = fulfillmentRepository.findById(fulfillmentId)
-                .verifyBelongsToOrder(order);
-
-        final List<OrderLine> orderLines = removeLines(fulfillment, lineIds);
-
-        return DeleteFulfillmentLinesResult.builder()
-                .order(order)
-                .updatedLines(orderLines)
+                .addedFulfillmentLines(addedFulfillmentLines)
+                .updatedFulfillmentLines(updatedFulfillmentLines)
                 .build();
     }
 
@@ -238,6 +206,10 @@ public class DomainOrderService {
             final OrderFulfillment fulfillment,
             final List<Line> lines
     ) {
+        if (lines == null || lines.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         final MergedLines mergedLines = MergedLines.merge(lines);
 
         final List<OrderLine> orderLines = orderLineRepository.findAllById(mergedLines.getIds()).stream()
@@ -258,6 +230,9 @@ public class DomainOrderService {
     }
 
     private List<OrderFulfillmentLine> setQuantities(final OrderFulfillment fulfillment, final List<Line> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return Collections.emptyList();
+        }
         final MergedLines mergedLines = MergedLines.merge(lines);
 
         final List<OrderFulfillmentLine> fulfillmentLines = fulfillmentLineRepository.findAllById(mergedLines.getIds()).stream()
@@ -272,8 +247,11 @@ public class DomainOrderService {
     }
 
     private List<OrderLine> removeLines(final OrderFulfillment fulfillment, final Set<Long> lineIds) {
+        if (lineIds == null || lineIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<OrderFulfillmentLine> fulfillmentLines = fulfillmentLineRepository.findAllByIdDoNotThrow(lineIds).stream()
-                .filter(fl -> fl.belongsToFulfillment(fulfillment))
+                .map(fl -> fl.verifyBelongsToFulfillment(fulfillment))
                 .collect(Collectors.toList());
 
         preLoadOrderLines(fulfillmentLines);
@@ -282,6 +260,11 @@ public class DomainOrderService {
                 .map(fulfillment::removeLine)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private void removeDuplicates(final List<OrderLine> orderLines) {
+        final HashSet<Object> seen = new HashSet<>();
+        orderLines.removeIf(ol -> !seen.add(ol.getId()));
     }
 
 }
