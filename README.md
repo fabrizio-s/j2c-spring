@@ -5,11 +5,13 @@ Backend for sample b2c e-commerce web app made using Spring Boot 2, JPA/Hibernat
 ### Summary:
 (Get the swagger.json from the latest release. Copy the contents of swagger.json and paste them [here](https://editor.swagger.io/) to see all currently available operations.)
 
-This application allows staff members (**Users** with **Role** *Staff* or *Admin*) to create **Products** (i.e. t-shirt) and **Product Variants** (i.e. blue t-shirt, white t-shirt). It's possible to upload a single **Product Image** for a Product (which is the image that customers see while browsing Products) and multiple **Product Variant Images** (images that the customer sees while they're on a specific **Product**'s site).
+On application start-up, if no users exist on the database, a user with the email 'admin@j2c.com' and password 'admin' will be created.
+
+This application allows staff members (**Users** with **Role** *Staff* or *Admin*) to create **Products** (i.e. t-shirt) and **Product Variants** (i.e. blue t-shirt, white t-shirt). It's possible to upload a single **Product Image** for a Product (which is the image that customers see while browsing Products) and multiple **Product Variant Images** (images that the customer sees while they're on a specific **Product**'s site). Currently, only filesystem image storage is supported.
 
 Staff members can also do CRUD operations on **Product Categories**, **Product Tags**, **Shipping Methods** and **Shipping Zones**. A single **Product** may belong to at most one **Product Category**, but it can be associated with multiple **Product Tags**, thus allowing customers to filter products based on **Product Category** or **Product Tag**. A **Product Category** may also have multiple sub-categories, and those sub-categories may also themselves have sub-categories, and so on, to the desired level of nesting.
 
-RBAC is used for authentication. **Users** with the **Role** *Admin* can do any operation. *Staff* is like *Admin*, but they cannot do any CRUD operations on **Users**. *Customers* can only browse **Products** and purchase **Product Variants**, and modify their own data (email, password, etc). *Viewers* are like *Customers*, but they can also view (but not modify) anything (including **Orders**).
+RBAC with JWT Tokens is used for authentication. **Users** with the **Role** *Admin* can do any operation. *Staff* is like *Admin*, but they cannot modify **Users**. *Customers* can only browse **Products** and purchase **Product Variants**, and modify their own data (email, password, etc). *Viewers* are like *Customers*, but they can also view (but not modify) anything (including **Orders**).
 
 The checkout process (purchase of **Product Variants**) can be done by either registered or anonymous **Users**. During **Checkout**, the customer must provide a shipping address and a **Shipping Method** (if at least one of the **Products** they are trying to purchase is not digital), billing address (which can be the same as the shipping address) and card details. The **Checkout** cannot be completed if the customer has not provided all required information.
 
