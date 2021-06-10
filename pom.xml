@@ -23,7 +23,7 @@
 	</modules>
 
 	<properties>
-		<revision>0.0.2</revision>
+		<revision>0.0.3</revision>
 		<java.version>11</java.version>
 		<spring.profiles.active>default</spring.profiles.active>
 		<maven.test.skip>false</maven.test.skip>

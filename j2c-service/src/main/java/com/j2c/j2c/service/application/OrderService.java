@@ -7,6 +7,7 @@ import com.j2c.j2c.service.dto.OrderLineDTO;
 import com.j2c.j2c.service.input.CompleteOrderFulfillmentForm;
 import com.j2c.j2c.service.input.Line;
 import com.j2c.j2c.service.input.UpdateOrderFulfillmentTrackingNumberForm;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,7 +19,7 @@ public interface OrderService {
 
     OrderDTO find(@NotNull Long orderId);
 
-    Page<OrderDTO> findAll(@NotNull Pageable pageable);
+    Page<OrderDTO> findAll(@NotNull Predicate predicate, @NotNull Pageable pageable);
 
     Page<OrderLineDTO> findLines(@NotNull Long orderId, @NotNull Pageable pageable);
 

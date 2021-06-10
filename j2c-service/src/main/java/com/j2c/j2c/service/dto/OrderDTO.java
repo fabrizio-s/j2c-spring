@@ -5,6 +5,7 @@ import com.neovisionaries.i18n.CurrencyCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -45,6 +46,8 @@ public final class OrderDTO {
     private final ShippingMethodDetailsDTO shippingMethodDetails;
 
     private final AddressDTO shippingAddress;
+
+    private final LocalDateTime createdAt;
 
     @Schema(hidden = true)
     private final OrderFulfillmentDTO fulfillment;
